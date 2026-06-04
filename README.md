@@ -42,17 +42,3 @@ openssl x509 -in certificate.pem -pubkey -noout
 ```
 
 Simply paste your PEM key into the tool, configure any optional parameters (like Public Key Use, Algorithm, or Key ID), and click **Convert to JWK**.
-
-## Deployment
-
-Because this is a static single-page application with no backend, it can be deployed for free on Vercel with zero configuration.
-
-### Deploy via Vercel CLI
-```bash
-npx vercel
-```
-
-### Deploy via GitHub
-1. Push this repository to GitHub.
-2. Log into [Vercel](https://vercel.com).
-3. Import the repository. Vercel will automatically detect the Vite framework and handle the build commands (`npm run build` and the `dist` directory) for you.

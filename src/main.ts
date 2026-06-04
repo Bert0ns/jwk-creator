@@ -1,6 +1,5 @@
 import './style.css'
-// @ts-ignore
-import { pem2jwk } from 'pem-jwk'
+import { convertKey } from './converter'
 
 // DOM Elements
 const useSelect = document.getElementById('use') as HTMLSelectElement;
@@ -23,15 +22,12 @@ convertBtn.addEventListener('click', () => {
     return;
   }
 
-  // Gather extras (parameters)
-  const extras: Record<string, string> = {};
-  if (useSelect.value) extras.use = useSelect.value;
-  if (algSelect.value) extras.alg = algSelect.value;
-  if (kidInput.value) extras.kid = kidInput.value.trim();
-
   try {
-    const jwk = pem2jwk(pem, extras);
-    currentJwk = JSON.stringify(jwk, null, 2);
+    currentJwk = convertKey(pem, {
+      use: useSelect.value,
+      alg: algSelect.value,
+      kid: kidInput.value.trim()
+    });
     
     // Update UI
     outputPre.textContent = currentJwk;

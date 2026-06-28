@@ -8,6 +8,7 @@ const kidInput = document.getElementById('kid') as HTMLInputElement;
 const pemInput = document.getElementById('pem') as HTMLTextAreaElement;
 const convertBtn = document.getElementById('convert-btn') as HTMLButtonElement;
 const copyBtn = document.getElementById('copy-btn') as HTMLButtonElement;
+const copyMinifiedBtn = document.getElementById('copy-minified-btn') as HTMLButtonElement;
 const outputPre = document.getElementById('output') as HTMLPreElement;
 
 // State
@@ -33,6 +34,7 @@ convertBtn.addEventListener('click', () => {
     outputPre.textContent = currentJwk;
     outputPre.classList.add('visible');
     copyBtn.style.display = 'inline-flex';
+    copyMinifiedBtn.style.display = 'inline-flex';
     
     // Add a slight pop animation
     outputPre.animate([
@@ -45,8 +47,41 @@ convertBtn.addEventListener('click', () => {
     outputPre.textContent = '';
     outputPre.classList.remove('visible');
     copyBtn.style.display = 'none';
+    copyMinifiedBtn.style.display = 'none';
     currentJwk = null;
     showNotification('Invalid input. Make sure the PEM key is correctly formatted.', 'error');
+  }
+});
+
+// Copy Minified handler
+copyMinifiedBtn.addEventListener('click', () => {
+  if (!currentJwk) return;
+  
+  try {
+    const minified = JSON.stringify(JSON.parse(currentJwk));
+    navigator.clipboard.writeText(minified)
+      .then(() => {
+        showNotification('Copied minified to clipboard!', 'success');
+        
+        // Button feedback
+        const originalHtml = copyMinifiedBtn.innerHTML;
+        copyMinifiedBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied';
+        copyMinifiedBtn.style.background = 'rgba(16, 185, 129, 0.2)';
+        copyMinifiedBtn.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+        
+        setTimeout(() => {
+          copyMinifiedBtn.innerHTML = originalHtml;
+          copyMinifiedBtn.style.background = '';
+          copyMinifiedBtn.style.borderColor = '';
+        }, 2000);
+      })
+      .catch(err => {
+        console.error('Could not copy text: ', err);
+        showNotification('Failed to copy', 'error');
+      });
+  } catch (error) {
+    console.error('Failed to parse JWK for minification', error);
+    showNotification('Failed to minify', 'error');
   }
 });
 
